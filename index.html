@@ -1,1 +1,227 @@
-Hi There
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>OwnTracks Android Client Web Configurator</title>
+    <style>
+        form#form > fieldset {
+            column-count: 4;
+            column-rule-style: solid;
+            column-rule-width: thin;
+            column-rule-color: #999;
+        }
+
+        form#form > fieldset > p {
+            text-align: right;
+        }
+
+        div#config > pre#outputConfig {
+            float: left;
+            width: 45%;
+        }
+
+        div#config > div#links {
+            margin-left: 1rem;
+            float: left;
+        }
+
+    </style>
+</head>
+
+<body>
+<script type="application/javascript">
+    let config = {
+        "_type": "configuration",
+        "auth": true,
+        "autostartOnBoot": true,
+        "cleanSession": false,
+        "clientId": "",
+        "cmd": false,
+        "debugLog": false,
+        "deviceId": "",
+        "experimentalFeatures": [],
+        "fusedRegionDetection": true,
+        "geocodeEnabled": true,
+        "host": "",
+        "ignoreInaccurateLocations": 150,
+        "ignoreStaleLocations": 0.0,
+        "keepalive": 900,
+        "locatorDisplacement": 5,
+        "locatorInterval": 60,
+        "locatorPriority": 2,
+        "mode": 0,
+        "monitoring": 1,
+        "moveModeLocatorInterval": 2,
+        "mqttProtocolLevel": 3,
+        "notificationHigherPriority": false,
+        "notificationLocation": true,
+        "opencageApiKey": "",
+        "password": "",
+        "ping": 30,
+        "port": 1883,
+        "pubExtendedData": true,
+        "pubQos": 1,
+        "pubRetain": true,
+        "pubTopicBase": "owntracks/%u/%d",
+        "remoteConfiguration": true,
+        "reverseGeocodeProvider": "Device",
+        "sub": true,
+        "subQos": 2,
+        "subTopic": "owntracks/+/+",
+        "tls": false,
+        "usePassword": true,
+        "username": "",
+        "ws": false
+    }
+
+    function generateConfig() {
+        document.getElementById("outputConfig").innerText = JSON.stringify(config, null, '\t');
+        let base64Config = btoa(JSON.stringify(config));
+        let owntracksConfigURI = "owntracks:///config?inline=" + base64Config;
+        document.getElementById("outputURL").value = owntracksConfigURI;
+        document.location.hash = base64Config;
+        document.getElementById("outputLink").setAttribute("href", owntracksConfigURI);
+    }
+
+    function initializeElements() {
+        for (const [key, value] of Object.entries(config)) {
+            let element = document.getElementById(key);
+            if (element) {
+                if (element.getAttribute("type") === "checkbox") {
+                    document.getElementById(key).checked = value;
+                } else {
+                    document.getElementById(key).value = value;
+                }
+            }
+        }
+        document.getElementById("outputURL").onclick = function (e) {
+            this.select();
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        initializeElements();
+        if (document.location.hash !== "") {
+            console.log("Loading Config from URL");
+            let inputBase64Config = document.location.hash.substring(1);
+            try {
+                let inputConfigJSON = atob(inputBase64Config);
+                let inputConfig = JSON.parse(inputConfigJSON);
+                for (const [key, value] of Object.entries(config)) {
+                    if (key !== "_configuration" &&
+                        key in inputConfig &&
+                        typeof (inputConfig[key]) === typeof (value) &&
+                        document.getElementById(key)) {
+                        console.log(`loading ${key} with value ${inputConfig[key]}`);
+                        let element = document.getElementById(key);
+                        if (element.getAttribute("type") === "checkbox") {
+                            document.getElementById(key).checked = inputConfig[key];
+                        } else {
+                            document.getElementById(key).value = inputConfig[key];
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error(`Failed to decode config in URL: ${e}`);
+            }
+        }
+        generateConfig();
+        let inputs = document.getElementById("form").getElementsByTagName("input");
+        Array.prototype.slice.call(inputs).forEach(input => {
+            input.onchange = function (a) {
+                if (this.getAttribute("type") === "checkbox") {
+                    config[this.id] = this.checked
+                } else if (this.getAttribute("type") === "text") {
+                    config[this.id] = this.value
+                }
+                generateConfig()
+            }
+        })
+    });
+
+</script>
+<h1>OwnTracks Web Configurator</h1>
+
+<form id="form">
+    <fieldset>
+        <p><label for="auth">Auth</label><input type="checkbox" id="auth"/></p>
+        <p><label for="autostartOnBoot">Autostart on Boot</label><input type="checkbox" id="autostartOnBoot"/></p>
+        <p><label for="cleanSession">Clean Session</label><input type="checkbox" id="cleanSession"/></p>
+
+        <p><label for="clientId">MQTT Client ID</label><input type="text" id="clientId"/></p>
+
+        <p><label for="debugLog">Debug Log</label><input type="checkbox" id="debugLog"/></p>
+        <p><label for="deviceId">Device ID</label><input type="text" id="deviceId"/></p>
+
+        <p><label for="geocodeEnabled">Geocode Enabled</label><input type="checkbox" id="geocodeEnabled"/></p>
+        <p><label for="host">Host</label><input type="text" id="host"/></p>
+        <p>
+            <label for="ignoreInaccurateLocations">Ignore inaccurate locations (m)</label>
+            <input type="text" id="ignoreInaccurateLocations"/>
+        </p>
+        <p><label for="ignoreStaleLocations">Ignore stale locations (s)</label><input type="text"
+                                                                                      id="ignoreStaleLocations"/></p>
+        <p><label for="keepalive">Keepalive</label><input type="text" id="keepalive"/></p>
+        <p><label for="locatorDisplacement">Locator Displacement</label><input type="checkbox"
+                                                                               id="locatorDisplacement"/></p>
+        <p><label for="locatorInterval">Locator Interval</label><input type="text" id="locatorInterval"/></p>
+        <p><label for="locatorPriority">Locator Priority</label><input type="text" id="locatorPriority"/></p>
+        <p><label for="mode">Mode (HTTP/MQTT)</label><input type="checkbox" id="mode"/></p>
+        <p><label for="monitoring">Monitoring</label><input type="checkbox" id="monitoring"/></p>
+        <p>
+            <label for="moveModeLocatorInterval">Locator Interval (Move Mode) (s)</label>
+            <input type="checkbox" id="moveModeLocatorInterval"/>
+        </p>
+        <p><label for="mqttProtocolLevel">MQTT Protocol Level</label><input type="checkbox" id="mqttProtocolLevel"/></p>
+        <p>
+            <label for="notificationHigherPriority">Notification has higher priority?</label>
+            <input type="checkbox" id="notificationHigherPriority"/>
+        </p>
+        <p>
+            <label for="notificationLocation">Notification shows current location</label>
+            <input type="checkbox" id="notificationLocation"/>
+        </p>
+        <p><label for="opencageApiKey">OpenCage API Key</label><input type="text" id="opencageApiKey"/></p>
+        <p><label for="password">Password</label><input type="text" id="password"/></p>
+
+        <p><label for="port">Port</label><input type="checkbox" id="port"/></p>
+        <p><label for="pubExtendedData">Publish Extended Data</label><input type="checkbox" id="pubExtendedData"/></p>
+        <p><label for="pubQos">Publish QoS</label><input type="checkbox" id="pubQos"/></p>
+        <p><label for="pubRetain">Publish Retain</label><input type="checkbox" id="pubRetain"/></p>
+        <p><label for="pubTopicBase">Publish Topic</label><input type="checkbox" id="pubTopicBase"/></p>
+        <p>
+            <label for="remoteConfiguration">Enable Remote Configuration</label>
+            <input type="checkbox" id="remoteConfiguration"/>
+        </p>
+        <p>
+            <label for="reverseGeocodeProvider">Reverse Geocode Provider</label>
+            <input type="checkbox" id="reverseGeocodeProvider"/>
+        </p>
+        <p><label for="subQos">Subscription QoS</label><input type="checkbox" id="subQos"/></p>
+        <p><label for="subTopic">Subscription Topic</label><input type="checkbox" id="subTopic"/></p>
+        <p><label for="tls">TLS</label><input type="checkbox" id="tls"/></p>
+
+        <p><label for="username">Username</label><input type="checkbox" id="username"/></p>
+        <p><label for="ws">WebSockets</label><input type="checkbox" id="ws"/></p>
+    </fieldset>
+</form>
+<div id="config">
+    <p><label for="outputConfig">Output Configuration</label>
+    <pre id="outputConfig"></pre>
+
+    <div id="links">
+        <p>
+            <label for="outputURL">Output Configuration URL</label>
+            <br />
+            <textarea id="outputURL" readonly="readonly" cols="100" rows="10" ></textarea>
+        </p>
+        <p>
+            <label for="outputLink">Output Configuration Link</label>
+            <a href="" id="outputLink">Clickable</a></p>
+    </div>
+</div>
+</body>
+</html>
