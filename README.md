@@ -4,6 +4,8 @@
 
 A little helper webpage for configuring and generating OwnTracks client applications. Click on the options, get a URL generated that you can click on in your device to load the config.
 
+[https://owntracks.github.io/web-configurator/](https://owntracks.github.io/web-configurator/)
+
 # TODO
 
 * [ ] Make better
