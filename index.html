@@ -16,6 +16,11 @@
 
         form#form > fieldset > p {
             text-align: right;
+            break-inside: avoid-column;
+        }
+
+        form#form > fieldset > p > input {
+            margin-left: 1rem;
         }
 
         div#config > pre#outputConfig {
@@ -97,7 +102,7 @@
                 }
             }
         }
-        document.getElementById("outputURL").onclick = function (e) {
+        document.getElementById("outputURL").onclick = function () {
             this.select();
         }
     }
@@ -111,12 +116,17 @@
                 let inputConfigJSON = atob(inputBase64Config);
                 let inputConfig = JSON.parse(inputConfigJSON);
                 for (const [key, value] of Object.entries(config)) {
+
                     if (key !== "_configuration" &&
                         key in inputConfig &&
-                        typeof (inputConfig[key]) === typeof (value) &&
-                        document.getElementById(key)) {
+                        typeof (inputConfig[key]) === typeof (value) && document.getElementById(key)) {
+
                         console.log(`loading ${key} with value ${inputConfig[key]}`);
+                        config[key] = inputConfig[key]
                         let element = document.getElementById(key);
+                        if (element.localName === "select") {
+                            document.getElementById(key).value = inputConfig[key];
+                        }
                         if (element.getAttribute("type") === "checkbox") {
                             document.getElementById(key).checked = inputConfig[key];
                         } else {
@@ -128,14 +138,18 @@
                 console.error(`Failed to decode config in URL: ${e}`);
             }
         }
+        console.log("Mode is currently " + config["mode"]);
         generateConfig();
-        let inputs = document.getElementById("form").getElementsByTagName("input");
-        Array.prototype.slice.call(inputs).forEach(input => {
+        let inputs = Array.prototype.slice.call(document.getElementById("form").getElementsByTagName("input"));
+        let selects = Array.prototype.slice.call(document.getElementById("form").getElementsByTagName("select"));
+        inputs.concat(selects).forEach(input => {
             input.onchange = function (a) {
                 if (this.getAttribute("type") === "checkbox") {
-                    config[this.id] = this.checked
+                    config[this.id] = this.checked;
                 } else if (this.getAttribute("type") === "text") {
-                    config[this.id] = this.value
+                    config[this.id] = this.value;
+                } else if (this.id === "mode") {
+                    config[this.id] = parseInt(this.value, 10);
                 }
                 generateConfig()
             }
@@ -147,6 +161,10 @@
 
 <form id="form">
     <fieldset>
+        <p><label for="mode">Mode</label><select id="mode">
+            <option value="0">MQTT</option>
+            <option value="3">HTTP</option>
+        </select></p>
         <p><label for="auth">Auth</label><input type="checkbox" id="auth"/></p>
         <p><label for="autostartOnBoot">Autostart on Boot</label><input type="checkbox" id="autostartOnBoot"/></p>
         <p><label for="cleanSession">Clean Session</label><input type="checkbox" id="cleanSession"/></p>
@@ -169,7 +187,6 @@
                                                                                id="locatorDisplacement"/></p>
         <p><label for="locatorInterval">Locator Interval</label><input type="text" id="locatorInterval"/></p>
         <p><label for="locatorPriority">Locator Priority</label><input type="text" id="locatorPriority"/></p>
-        <p><label for="mode">Mode (HTTP/MQTT)</label><input type="checkbox" id="mode"/></p>
         <p><label for="monitoring">Monitoring</label><input type="checkbox" id="monitoring"/></p>
         <p>
             <label for="moveModeLocatorInterval">Locator Interval (Move Mode) (s)</label>
@@ -187,7 +204,7 @@
         <p><label for="opencageApiKey">OpenCage API Key</label><input type="text" id="opencageApiKey"/></p>
         <p><label for="password">Password</label><input type="text" id="password"/></p>
 
-        <p><label for="port">Port</label><input type="checkbox" id="port"/></p>
+        <p><label for="port">Port</label><input type="text" id="port"/></p>
         <p><label for="pubExtendedData">Publish Extended Data</label><input type="checkbox" id="pubExtendedData"/></p>
         <p><label for="pubQos">Publish QoS</label><input type="checkbox" id="pubQos"/></p>
         <p><label for="pubRetain">Publish Retain</label><input type="checkbox" id="pubRetain"/></p>
@@ -204,7 +221,7 @@
         <p><label for="subTopic">Subscription Topic</label><input type="checkbox" id="subTopic"/></p>
         <p><label for="tls">TLS</label><input type="checkbox" id="tls"/></p>
 
-        <p><label for="username">Username</label><input type="checkbox" id="username"/></p>
+        <p><label for="username">Username</label><input type="text" id="username"/></p>
         <p><label for="ws">WebSockets</label><input type="checkbox" id="ws"/></p>
     </fieldset>
 </form>
@@ -215,8 +232,8 @@
     <div id="links">
         <p>
             <label for="outputURL">Output Configuration URL</label>
-            <br />
-            <textarea id="outputURL" readonly="readonly" cols="100" rows="10" ></textarea>
+            <br/>
+            <textarea id="outputURL" readonly="readonly" cols="100" rows="10"></textarea>
         </p>
         <p>
             <label for="outputLink">Output Configuration Link</label>
