@@ -12,6 +12,7 @@
             column-rule-style: solid;
             column-rule-width: thin;
             column-rule-color: #999;
+            margin-bottom: 1rem;
         }
 
         form#form > fieldset > p {
@@ -19,7 +20,7 @@
             break-inside: avoid-column;
         }
 
-        form#form > fieldset > p > input {
+        form#form > fieldset > p > input, form#form > fieldset > p > select {
             margin-left: 1rem;
         }
 
@@ -49,7 +50,6 @@
         "deviceId": "",
         "experimentalFeatures": [],
         "fusedRegionDetection": true,
-        "geocodeEnabled": true,
         "host": "",
         "ignoreInaccurateLocations": 150,
         "ignoreStaleLocations": 0.0,
@@ -138,7 +138,6 @@
                 console.error(`Failed to decode config in URL: ${e}`);
             }
         }
-        console.log("Mode is currently " + config["mode"]);
         generateConfig();
         let inputs = Array.prototype.slice.call(document.getElementById("form").getElementsByTagName("input"));
         let selects = Array.prototype.slice.call(document.getElementById("form").getElementsByTagName("select"));
@@ -148,8 +147,13 @@
                     config[this.id] = this.checked;
                 } else if (this.getAttribute("type") === "text") {
                     config[this.id] = this.value;
-                } else if (this.id === "mode") {
-                    config[this.id] = parseInt(this.value, 10);
+                } else if (this.localName === "select") {
+                    let maybeNumeric = parseInt(this.value, 10);
+                    if (isNaN(maybeNumeric)) {
+                        config[this.id] = this.value;
+                    } else {
+                        config[this.id] = parseInt(this.value, 10);
+                    }
                 }
                 generateConfig()
             }
@@ -160,39 +164,85 @@
 <h1>OwnTracks Web Configurator</h1>
 
 <form id="form">
+    <p>
+        <label for="mode">Mode</label><select id="mode">
+        <option value="0">MQTT</option>
+        <option value="3">HTTP</option>
+    </select>
+    </p>
     <fieldset>
-        <p><label for="mode">Mode</label><select id="mode">
-            <option value="0">MQTT</option>
-            <option value="3">HTTP</option>
-        </select></p>
+        <legend>MQTT connection options</legend>
+        <p><label for="mqttProtocolLevel">MQTT Protocol Level</label>
+            <select id="mqttProtocolLevel">
+                <option value="3">MQTT 3.1</option>
+                <option value="4">MQTT 3.1.1</option>
+            </select>
+        </p>
         <p><label for="auth">Auth</label><input type="checkbox" id="auth"/></p>
-        <p><label for="autostartOnBoot">Autostart on Boot</label><input type="checkbox" id="autostartOnBoot"/></p>
-        <p><label for="cleanSession">Clean Session</label><input type="checkbox" id="cleanSession"/></p>
-
-        <p><label for="clientId">MQTT Client ID</label><input type="text" id="clientId"/></p>
-
-        <p><label for="debugLog">Debug Log</label><input type="checkbox" id="debugLog"/></p>
-        <p><label for="deviceId">Device ID</label><input type="text" id="deviceId"/></p>
-
-        <p><label for="geocodeEnabled">Geocode Enabled</label><input type="checkbox" id="geocodeEnabled"/></p>
         <p><label for="host">Host</label><input type="text" id="host"/></p>
+        <p><label for="port">Port</label><input type="text" id="port"/></p>
+        <p><label for="username">Username</label><input type="text" id="username"/></p>
+        <p><label for="password">Password</label><input type="text" id="password"/></p>
+        <p><label for="ws">Use websockets</label><input type="checkbox" id="ws"/></p>
+        <p><label for="tls">TLS</label><input type="checkbox" id="tls"/></p>
+        <p><label for="keepalive">Keepalive</label><input type="text" id="keepalive"/></p>
+        <p><label for="clientId">MQTT Client ID</label><input type="text" id="clientId"/></p>
+        <p><label for="deviceId">Device ID</label><input type="text" id="deviceId"/></p>
+        <p><label for="cleanSession">Clean Session</label><input type="checkbox" id="cleanSession"/></p>
+        <p>
+            <label for="pubQos">Publish QoS</label>
+            <select id="pubQos">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+            </select>
+        </p>
+        <p><label for="pubRetain">Publish Retain</label><input type="checkbox" id="pubRetain"/></p>
+        <p><label for="pubTopicBase">Publish Topic</label><input type="checkbox" id="pubTopicBase"/></p>
+        <p><label for="subQos">Subscription QoS</label><select id="subQos">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select></p>
+        <p><label for="subTopic">Subscription Topic</label><input type="checkbox" id="subTopic"/></p>
+    </fieldset>
+    <fieldset>
+        <legend>Reverse Geocoding</legend>
+        <p>
+            <label for="reverseGeocodeProvider">Reverse Geocode Provider</label>
+            <select id="reverseGeocodeProvider">
+                <option value="None">None</option>
+                <option value="Device">Device (Google)</option>
+                <option value="OpenCage">OpenCage</option>
+            </select>
+        </p>
+        <p><label for="opencageApiKey">OpenCage API Key</label><input type="text" id="opencageApiKey"/></p>
+    </fieldset>
+    <fieldset>
+        <legend>Locator Settings</legend>
         <p>
             <label for="ignoreInaccurateLocations">Ignore inaccurate locations (m)</label>
             <input type="text" id="ignoreInaccurateLocations"/>
         </p>
-        <p><label for="ignoreStaleLocations">Ignore stale locations (s)</label><input type="text"
-                                                                                      id="ignoreStaleLocations"/></p>
-        <p><label for="keepalive">Keepalive</label><input type="text" id="keepalive"/></p>
-        <p><label for="locatorDisplacement">Locator Displacement</label><input type="checkbox"
-                                                                               id="locatorDisplacement"/></p>
-        <p><label for="locatorInterval">Locator Interval</label><input type="text" id="locatorInterval"/></p>
-        <p><label for="locatorPriority">Locator Priority</label><input type="text" id="locatorPriority"/></p>
-        <p><label for="monitoring">Monitoring</label><input type="checkbox" id="monitoring"/></p>
+        <p>
+            <label for="ignoreStaleLocations">Ignore stale locations (s)</label>
+            <input type="text" id="ignoreStaleLocations"/>
+        </p>
         <p>
             <label for="moveModeLocatorInterval">Locator Interval (Move Mode) (s)</label>
-            <input type="checkbox" id="moveModeLocatorInterval"/>
+            <input type="text" id="moveModeLocatorInterval"/>
         </p>
-        <p><label for="mqttProtocolLevel">MQTT Protocol Level</label><input type="checkbox" id="mqttProtocolLevel"/></p>
+        <p><label for="locatorInterval">Locator Interval</label><input type="text" id="locatorInterval"/></p>
+        <p><label for="locatorPriority">Locator Priority</label><input type="text" id="locatorPriority"/></p>
+        <p>
+            <label for="locatorDisplacement">Locator Displacement</label>
+            <input type="checkbox" id="locatorDisplacement"/>
+        </p>
+    </fieldset>
+    <fieldset>
+        <legend>Misc</legend>
+        <p><label for="autostartOnBoot">Autostart on Boot</label><input type="checkbox" id="autostartOnBoot"/></p>
+        <p><label for="debugLog">Debug Log</label><input type="checkbox" id="debugLog"/></p>
         <p>
             <label for="notificationHigherPriority">Notification has higher priority?</label>
             <input type="checkbox" id="notificationHigherPriority"/>
@@ -201,28 +251,11 @@
             <label for="notificationLocation">Notification shows current location</label>
             <input type="checkbox" id="notificationLocation"/>
         </p>
-        <p><label for="opencageApiKey">OpenCage API Key</label><input type="text" id="opencageApiKey"/></p>
-        <p><label for="password">Password</label><input type="text" id="password"/></p>
-
-        <p><label for="port">Port</label><input type="text" id="port"/></p>
         <p><label for="pubExtendedData">Publish Extended Data</label><input type="checkbox" id="pubExtendedData"/></p>
-        <p><label for="pubQos">Publish QoS</label><input type="checkbox" id="pubQos"/></p>
-        <p><label for="pubRetain">Publish Retain</label><input type="checkbox" id="pubRetain"/></p>
-        <p><label for="pubTopicBase">Publish Topic</label><input type="checkbox" id="pubTopicBase"/></p>
         <p>
             <label for="remoteConfiguration">Enable Remote Configuration</label>
             <input type="checkbox" id="remoteConfiguration"/>
         </p>
-        <p>
-            <label for="reverseGeocodeProvider">Reverse Geocode Provider</label>
-            <input type="checkbox" id="reverseGeocodeProvider"/>
-        </p>
-        <p><label for="subQos">Subscription QoS</label><input type="checkbox" id="subQos"/></p>
-        <p><label for="subTopic">Subscription Topic</label><input type="checkbox" id="subTopic"/></p>
-        <p><label for="tls">TLS</label><input type="checkbox" id="tls"/></p>
-
-        <p><label for="username">Username</label><input type="text" id="username"/></p>
-        <p><label for="ws">WebSockets</label><input type="checkbox" id="ws"/></p>
     </fieldset>
 </form>
 <div id="config">
