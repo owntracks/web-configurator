@@ -146,7 +146,13 @@
                 if (this.getAttribute("type") === "checkbox") {
                     config[this.id] = this.checked;
                 } else if (this.getAttribute("type") === "text") {
-                    config[this.id] = this.value;
+                    // get configu value type
+                    let type = typeof (config[this.id]);
+                    if (type === "number") {
+                        config[this.id] = parseInt(this.value, 10);
+                    } else {
+                        config[this.id] = this.value;
+                    }
                 } else if (this.localName === "select") {
                     let maybeNumeric = parseInt(this.value, 10);
                     if (isNaN(maybeNumeric)) {
