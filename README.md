@@ -8,9 +8,9 @@ A little helper webpage for configuring and generating OwnTracks client applicat
 
 # TODO
 
-* [ ] Make better
+* [X] Make better
 * [ ] iOS / Android
 * [ ] MQTT / HTTP should be a toggle
-* [ ] Re-order fields
-* [ ] Enforce numeric types on number fields
+* [X] Re-order fields
+* [X] Enforce numeric types on number fields
 * [ ] Allow loading / saving out as an actual file
