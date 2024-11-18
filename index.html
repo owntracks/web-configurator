@@ -20,7 +20,7 @@
             background-color: var(--background-color);
         }
 
-        h1, h2 {
+        h1, h2, h2 a {
             color: var(--primary-color);
         }
 
@@ -229,7 +229,7 @@
                 console.log("YEAH")
                 if (this.getAttribute("type") === "checkbox") {
                     config[this.id] = this.checked;
-                } else if (["text","password","number"].includes(this.getAttribute("type"))) {
+                } else if (["text", "password", "number"].includes(this.getAttribute("type"))) {
                     // get config value type
                     let type = typeof (config[this.id]);
                     if (type === "number") {
@@ -252,6 +252,11 @@
 
 </script>
 <h1>OwnTracks Web Configurator</h1>
+<p>Configure your OwnTracks client settings here, and then send the generated config (or this clickable config link below) to
+    your device to configure it.</p>
+<h2>
+    <a href="" id="outputLink">Auto Configuration Link (send to your device and click it!)</a>
+</h2>
 
 <form id="form">
     <p>
@@ -436,14 +441,8 @@
         <pre id="outputConfig"></pre>
 
         <div id="links">
-            <p>
-                <label for="outputLink">Output Configuration Link</label>
-                <a href="" id="outputLink">Clickable</a></p>
-
             <label for="outputURL">Output Configuration URL</label>
-
             <textarea id="outputURL" readonly="readonly" cols="100" rows="10"></textarea>
-
         </div>
     </div>
 </section>
