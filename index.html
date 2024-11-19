@@ -1,450 +1,610 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="icon"
-          href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAADJ0lEQVRYw+1YW08TQRTuL4Mq6pPxkuCTGhL/gNpaLkEl8gKF+IKSKBCNiRHEByD2ogVsa6y9AbaV0ggtUkHSYqGl5dLSIn44dLPstjiQ2baJO5kHuucyH3O+OefMKKpV+oqaChmQDEgGVPmALt0frdNaMfFH2QCdUuvvPp8we5YTG5k93sBPfIQICiUCVHVb19jnXlzZ2DtyQAFqUJYW0Ok7hmHbgmBLnIEVneMHpiMQFWzYiG0BJlIBgutP0xFusam5mPqJUxAapVqPj1OzMU4NJsfCpKCP1Eh+b9I7ufZ+b7XqiHDooAA1oo9NpY8dLSAQgkNzq9tOY3Kz285hauxzsQSEuHAs1g546fcfyhzHKc8dFSAcY+LXE4wVjBQWHjCHCsVF5wmuEls4YQYIqYU4re8tsPPX2y3bmdzfuLjF0oYeF7GFEzaA8H/HU2l4TG3tiLf9jMYwu5QgS64l0xdFyRomMIQUTmioraCpDGS9ydlfIqz615YQP/F89kfEHmBIpDS15d+AUKSIu/fuJYEIKee3KEc/fOMTqMGQiOo6rCwAdRwAMk0cAnThnim2vi0uGtuZ7NU2M18ThgeAtFaWIfsyF+N/t/GytmAEwnF+doYhy5CBiYnUfoXaTGdr8suAvEbX4jv3/gwtJ8l6P2ObiA6Z19osRLNGY4AhS1Lzj33zswK55OVYsBjJMGHC+NjzE+NMOH4sQEqVHibsEyO/dHQN+ekBdQ1NS1I6MJvyxTWb2206nJGLAYIalImoqVASZ9Z+YJnHw36luiggiKDAoXlrD7NvP0iD5ptf5c72t8VEy4vJs/VGPiD8xEeIOLWFSPJcg1GqFrb2wZigSUXHQyodKXZcA0RGZid3o/OjtE1+fY9rd492PBKdAEluHa/GgzRoHDPREt3LQKavPDIVHKvJ9MnujSe8KNa2jgvIJBiap85SX6Ube13F0Axa5qtUulIDApn6P4TEaNBAoo0sz2MDyDT9fe1wM5RDi13O148rrePrPDJ1DvrK/xzDlTmrd7m6Et6HQCZcyqLxrfPNpkp5QQOZLreMMnElvzHKgGRA/x2gP5A6jEjTCN40AAAAAElFTkSuQmCC"
-          type="image/x-icon">
-    <title>OwnTracks Android Client Web Configurator</title>
-    <style>
-        :root {
-            --primary-color: #3f72b5;
-            --background-color: #f2f3ff;
-        }
-
-        body {
-            font-family: Helvetica, Arial, sans-serif;
-            margin: 1rem;
-            background-color: var(--background-color);
-        }
-
-        h1, h2, h2 a {
-            color: var(--primary-color);
-        }
-
-        form#form > fieldset {
-            border: 2px dashed var(--background-color);
-            column-count: 4;
-            column-rule-style: solid;
-            column-rule-width: thin;
-            column-rule-color: #999;
-            margin-bottom: 1rem;
-            background-color: var(--background-color);
-            padding: 1rem;
-            border-top: 1px solid var(--primary-color);
-        }
-
-        form#form > fieldset > legend {
-            color: var(--primary-color);
-            padding: 0.5rem;
-            font-weight: bold;
-        }
-
-        select {
-            padding: 0.5rem;
-            border: 1px dashed var(--primary-color);
-            background-color: var(--background-color);
-            font-family: inherit;
-            font-size: inherit;
-            width: 28ch;
-            border-radius: 0.25em;
-            cursor: inherit;
-            line-height: inherit;
-            outline: none;
-        }
-
-
-        form#form > fieldset > p {
-            text-align: right;
-            break-inside: avoid-column;
-        }
-
-        form#form > fieldset > p > input,
-        form#form > fieldset > p > select {
-            margin-left: 1rem;
-        }
-
-        form#form > fieldset > p > input[type="text"],
-        form#form > fieldset > p > input[type="password"],
-        form#form > fieldset > p > input[type="number"] {
-            border: 1px dashed var(--primary-color);
-            border-radius: 0.25em;
-            padding: 0.5rem;
-            width: 30ch;
-        }
-
-        div#config {
-            display: flex;
-            justify-content: center;
-        }
-
-        div#config > pre#outputConfig {
-            flex-grow: 1;
-            background-color: var(--background-color);
-            border: 2px solid var(--primary-color);
-            padding: 1rem;
-            font-size: 1rem;
-        }
-
-        div#config > div#links {
-            flex-grow: 1;
-            align-items: stretch;
-            margin-left: 1rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        div#config > div#links a {
-            color: var(--primary-color);
-        }
-
-        div#config > div#links textarea {
-            background-color: var(--background-color);
-            border: 2px solid var(--primary-color);
-            padding: 1rem;
-            font-size: 0.8rem;
-        }
-
-    </style>
-</head>
-
-<body>
-<script type="application/javascript">
-    let config = {
-        "_type": "configuration",
-        "autostartOnBoot": true,
-        "cleanSession": false,
-        "clientId": "OwnTracksClient",
-        "cmd": true,
-        "connectionTimeoutSeconds": 30,
-        "debugLog": false,
-        "deviceId": "OwnTracksDevice",
-        "enableMapRotation": true,
-        "encryptionKey": "",
-        "extendedData": true,
-        "fusedRegionDetection": true,
-        "host": "",
-        "ignoreInaccurateLocations": 0,
-        "ignoreStaleLocations": 0.0,
-        "info": true,
-        "keepalive": 3600,
-        "locatorDisplacement": 500,
-        "locatorInterval": 60,
-        "mapLayerStyle": "GoogleMapDefault",
-        "mode": 0,
-        "monitoring": 1,
-        "moveModeLocatorInterval": 10,
-        "mqttProtocolLevel": 3,
-        "notificationEvents": true,
-        "notificationGeocoderErrors": true,
-        "notificationHigherPriority": false,
-        "notificationLocation": true,
-        "opencageApiKey": "",
-        "osmTileScaleFactor": 1.0,
-        "password": "",
-        "pegLocatorFastestIntervalToInterval": false,
-        "ping": 15,
-        "port": 8883,
-        "pubQos": 1,
-        "pubRetain": true,
-        "pubTopicBase": "owntracks/%u/%d",
-        "publishLocationOnConnect": false,
-        "remoteConfiguration": false,
-        "reverseGeocodeProvider": "Device",
-        "showRegionsOnMap": false,
-        "sub": true,
-        "subQos": 2,
-        "subTopic": "owntracks/+/+",
-        "theme": "Auto",
-        "tid": "xa",
-        "tls": true,
-        "tlsClientCrt": "",
-        "username": "",
-        "ws": false
-    }
-
-    function generateConfig() {
-        document.getElementById("outputConfig").innerText = JSON.stringify(config, null, '\t');
-        let base64Config = btoa(JSON.stringify(config));
-        let owntracksConfigURI = "owntracks:///config?inline=" + base64Config;
-        document.getElementById("outputURL").value = owntracksConfigURI;
-        document.location.hash = base64Config;
-        document.getElementById("outputLink").setAttribute("href", owntracksConfigURI);
-    }
-
-    function initializeElements() {
-        for (const [key, value] of Object.entries(config)) {
-            let element = document.getElementById(key);
-            if (element) {
-                if (element.getAttribute("type") === "checkbox") {
-                    document.getElementById(key).checked = value;
-                } else {
-                    document.getElementById(key).value = value;
-                }
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="x-ua-compatible" content="ie=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link
+            rel="icon"
+            href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAADJ0lEQVRYw+1YW08TQRTuL4Mq6pPxkuCTGhL/gNpaLkEl8gKF+IKSKBCNiRHEByD2ogVsa6y9AbaV0ggtUkHSYqGl5dLSIn44dLPstjiQ2baJO5kHuucyH3O+OefMKKpV+oqaChmQDEgGVPmALt0frdNaMfFH2QCdUuvvPp8we5YTG5k93sBPfIQICiUCVHVb19jnXlzZ2DtyQAFqUJYW0Ok7hmHbgmBLnIEVneMHpiMQFWzYiG0BJlIBgutP0xFusam5mPqJUxAapVqPj1OzMU4NJsfCpKCP1Eh+b9I7ufZ+b7XqiHDooAA1oo9NpY8dLSAQgkNzq9tOY3Kz285hauxzsQSEuHAs1g546fcfyhzHKc8dFSAcY+LXE4wVjBQWHjCHCsVF5wmuEls4YQYIqYU4re8tsPPX2y3bmdzfuLjF0oYeF7GFEzaA8H/HU2l4TG3tiLf9jMYwu5QgS64l0xdFyRomMIQUTmioraCpDGS9ydlfIqz615YQP/F89kfEHmBIpDS15d+AUKSIu/fuJYEIKee3KEc/fOMTqMGQiOo6rCwAdRwAMk0cAnThnim2vi0uGtuZ7NU2M18ThgeAtFaWIfsyF+N/t/GytmAEwnF+doYhy5CBiYnUfoXaTGdr8suAvEbX4jv3/gwtJ8l6P2ObiA6Z19osRLNGY4AhS1Lzj33zswK55OVYsBjJMGHC+NjzE+NMOH4sQEqVHibsEyO/dHQN+ekBdQ1NS1I6MJvyxTWb2206nJGLAYIalImoqVASZ9Z+YJnHw36luiggiKDAoXlrD7NvP0iD5ptf5c72t8VEy4vJs/VGPiD8xEeIOLWFSPJcg1GqFrb2wZigSUXHQyodKXZcA0RGZid3o/OjtE1+fY9rd492PBKdAEluHa/GgzRoHDPREt3LQKavPDIVHKvJ9MnujSe8KNa2jgvIJBiap85SX6Ube13F0Axa5qtUulIDApn6P4TEaNBAoo0sz2MDyDT9fe1wM5RDi13O148rrePrPDJ1DvrK/xzDlTmrd7m6Et6HQCZcyqLxrfPNpkp5QQOZLreMMnElvzHKgGRA/x2gP5A6jEjTCN40AAAAAElFTkSuQmCC"
+            type="image/x-icon"
+        />
+        <title>OwnTracks Android Client Web Configurator</title>
+        <style>
+            :root {
+                --primary-color: #3f72b5;
+                --background-color: #f2f3ff;
             }
-        }
-        document.getElementById("outputURL").onclick = function () {
-            this.select();
-        }
-    }
 
-    document.addEventListener("DOMContentLoaded", function () {
-        initializeElements();
-        if (document.location.hash !== "") {
-            console.log("Loading Config from URL");
-            let inputBase64Config = document.location.hash.substring(1);
-            try {
-                let inputConfigJSON = atob(inputBase64Config);
-                let inputConfig = JSON.parse(inputConfigJSON);
+            body {
+                font-family: Helvetica, Arial, sans-serif;
+                margin: 1rem;
+                background-color: var(--background-color);
+            }
+
+            h1,
+            h2,
+            h2 a {
+                color: var(--primary-color);
+            }
+
+            form#form > fieldset {
+                border: 2px dashed var(--background-color);
+                column-count: 4;
+                column-rule-style: solid;
+                column-rule-width: thin;
+                column-rule-color: #999;
+                margin-bottom: 1rem;
+                background-color: var(--background-color);
+                padding: 1rem;
+                border-top: 1px solid var(--primary-color);
+            }
+
+            form#form > fieldset > legend {
+                color: var(--primary-color);
+                padding: 0.5rem;
+                font-weight: bold;
+            }
+
+            select {
+                padding: 0.5rem;
+                border: 1px dashed var(--primary-color);
+                background-color: var(--background-color);
+                font-family: inherit;
+                font-size: inherit;
+                width: 28ch;
+                border-radius: 0.25em;
+                cursor: inherit;
+                line-height: inherit;
+                outline: none;
+            }
+
+            form#form > fieldset > p {
+                text-align: right;
+                break-inside: avoid-column;
+            }
+
+            form#form > fieldset > p > input,
+            form#form > fieldset > p > select {
+                margin-left: 1rem;
+            }
+
+            form#form > fieldset > p > input[type="text"],
+            form#form > fieldset > p > input[type="password"],
+            form#form > fieldset > p > input[type="number"] {
+                border: 1px dashed var(--primary-color);
+                border-radius: 0.25em;
+                padding: 0.5rem;
+                width: 30ch;
+            }
+
+            div#config {
+                display: flex;
+                justify-content: center;
+            }
+
+            div#config > pre#outputConfig {
+                flex-grow: 1;
+                background-color: var(--background-color);
+                border: 2px solid var(--primary-color);
+                padding: 1rem;
+                font-size: 1rem;
+            }
+
+            div#config > div#links {
+                flex-grow: 1;
+                align-items: stretch;
+                margin-left: 1rem;
+                display: flex;
+                flex-direction: column;
+            }
+
+            div#config > div#links a {
+                color: var(--primary-color);
+            }
+
+            div#config > div#links textarea {
+                background-color: var(--background-color);
+                border: 2px solid var(--primary-color);
+                padding: 1rem;
+                font-size: 0.8rem;
+            }
+        </style>
+    </head>
+
+    <body>
+        <script type="application/javascript">
+            let config = {
+                _type: "configuration",
+                autostartOnBoot: true,
+                cleanSession: false,
+                clientId: "OwnTracksClient",
+                cmd: true,
+                connectionTimeoutSeconds: 30,
+                debugLog: false,
+                deviceId: "OwnTracksDevice",
+                enableMapRotation: true,
+                encryptionKey: "",
+                extendedData: true,
+                fusedRegionDetection: true,
+                host: "",
+                ignoreInaccurateLocations: 0,
+                ignoreStaleLocations: 0.0,
+                info: true,
+                keepalive: 3600,
+                locatorDisplacement: 500,
+                locatorInterval: 60,
+                mapLayerStyle: "GoogleMapDefault",
+                mode: 0,
+                monitoring: 1,
+                moveModeLocatorInterval: 10,
+                mqttProtocolLevel: 3,
+                notificationEvents: true,
+                notificationGeocoderErrors: true,
+                notificationHigherPriority: false,
+                notificationLocation: true,
+                opencageApiKey: "",
+                osmTileScaleFactor: 1.0,
+                password: "",
+                pegLocatorFastestIntervalToInterval: false,
+                ping: 15,
+                port: 8883,
+                pubQos: 1,
+                pubRetain: true,
+                pubTopicBase: "owntracks/%u/%d",
+                publishLocationOnConnect: false,
+                remoteConfiguration: false,
+                reverseGeocodeProvider: "Device",
+                showRegionsOnMap: false,
+                sub: true,
+                subQos: 2,
+                subTopic: "owntracks/+/+",
+                theme: "Auto",
+                tid: "xa",
+                tls: true,
+                tlsClientCrt: "",
+                username: "",
+                ws: false,
+            };
+
+            function generateConfig() {
+                document.getElementById("outputConfig").innerText =
+                    JSON.stringify(config, null, "\t");
+                let base64Config = btoa(JSON.stringify(config));
+                let owntracksConfigURI =
+                    "owntracks:///config?inline=" + base64Config;
+                document.getElementById("outputURL").value = owntracksConfigURI;
+                document.location.hash = base64Config;
+                document
+                    .getElementById("outputLink")
+                    .setAttribute("href", owntracksConfigURI);
+            }
+
+            function initializeElements() {
                 for (const [key, value] of Object.entries(config)) {
-
-                    if (key !== "_configuration" &&
-                        key in inputConfig &&
-                        typeof (inputConfig[key]) === typeof (value) && document.getElementById(key)) {
-
-                        console.debug(`loading ${key} with value ${inputConfig[key]}`);
-                        config[key] = inputConfig[key]
-                        let element = document.getElementById(key);
-                        if (element.localName === "select") {
-                            document.getElementById(key).value = inputConfig[key];
-                        }
+                    let element = document.getElementById(key);
+                    if (element) {
                         if (element.getAttribute("type") === "checkbox") {
-                            document.getElementById(key).checked = inputConfig[key];
+                            document.getElementById(key).checked = value;
                         } else {
-                            document.getElementById(key).value = inputConfig[key];
+                            document.getElementById(key).value = value;
                         }
                     }
                 }
-            } catch (e) {
-                console.error(`Failed to decode config in URL: ${e}`);
+                document.getElementById("outputURL").onclick = function () {
+                    this.select();
+                };
             }
-        }
-        generateConfig();
-        let inputs = Array.prototype.slice.call(document.getElementById("form").getElementsByTagName("input"));
-        let selects = Array.prototype.slice.call(document.getElementById("form").getElementsByTagName("select"));
-        inputs.concat(selects).forEach(input => {
-            input.onchange = function (_) {
-                console.log("YEAH")
-                if (this.getAttribute("type") === "checkbox") {
-                    config[this.id] = this.checked;
-                } else if (["text", "password", "number"].includes(this.getAttribute("type"))) {
-                    // get config value type
-                    let type = typeof (config[this.id]);
-                    if (type === "number") {
-                        config[this.id] = parseInt(this.value, 10);
-                    } else {
-                        config[this.id] = this.value;
-                    }
-                } else if (this.localName === "select") {
-                    let maybeNumeric = parseInt(this.value, 10);
-                    if (isNaN(maybeNumeric)) {
-                        config[this.id] = this.value;
-                    } else {
-                        config[this.id] = parseInt(this.value, 10);
+
+            document.addEventListener("DOMContentLoaded", function () {
+                initializeElements();
+                if (document.location.hash !== "") {
+                    console.log("Loading Config from URL");
+                    let inputBase64Config = document.location.hash.substring(1);
+                    try {
+                        let inputConfigJSON = atob(inputBase64Config);
+                        let inputConfig = JSON.parse(inputConfigJSON);
+                        for (const [key, value] of Object.entries(config)) {
+                            if (
+                                key !== "_configuration" &&
+                                key in inputConfig &&
+                                typeof inputConfig[key] === typeof value &&
+                                document.getElementById(key)
+                            ) {
+                                console.debug(
+                                    `loading ${key} with value ${inputConfig[key]}`,
+                                );
+                                config[key] = inputConfig[key];
+                                let element = document.getElementById(key);
+                                if (element.localName === "select") {
+                                    document.getElementById(key).value =
+                                        inputConfig[key];
+                                }
+                                if (
+                                    element.getAttribute("type") === "checkbox"
+                                ) {
+                                    document.getElementById(key).checked =
+                                        inputConfig[key];
+                                } else {
+                                    document.getElementById(key).value =
+                                        inputConfig[key];
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.error(`Failed to decode config in URL: ${e}`);
                     }
                 }
-                generateConfig()
-            }
-        })
-    });
+                generateConfig();
+                let inputs = Array.prototype.slice.call(
+                    document
+                        .getElementById("form")
+                        .getElementsByTagName("input"),
+                );
+                let selects = Array.prototype.slice.call(
+                    document
+                        .getElementById("form")
+                        .getElementsByTagName("select"),
+                );
+                inputs.concat(selects).forEach((input) => {
+                    input.onchange = function (_) {
+                        console.log("YEAH");
+                        if (this.getAttribute("type") === "checkbox") {
+                            config[this.id] = this.checked;
+                        } else if (
+                            ["text", "password", "number"].includes(
+                                this.getAttribute("type"),
+                            )
+                        ) {
+                            // get config value type
+                            let type = typeof config[this.id];
+                            if (type === "number") {
+                                config[this.id] = parseInt(this.value, 10);
+                            } else {
+                                config[this.id] = this.value;
+                            }
+                        } else if (this.localName === "select") {
+                            let maybeNumeric = parseInt(this.value, 10);
+                            if (isNaN(maybeNumeric)) {
+                                config[this.id] = this.value;
+                            } else {
+                                config[this.id] = parseInt(this.value, 10);
+                            }
+                        }
+                        generateConfig();
+                    };
+                });
+            });
+        </script>
+        <h1>OwnTracks Web Configurator</h1>
+        <p>
+            Configure your OwnTracks client settings here, and then send the
+            generated config (or this clickable config link below) to your
+            device to configure it.
+        </p>
+        <h2>
+            <a href="" id="outputLink"
+                >Auto Configuration Link (send to your device and click it!)</a
+            >
+        </h2>
 
-</script>
-<h1>OwnTracks Web Configurator</h1>
-<p>Configure your OwnTracks client settings here, and then send the generated config (or this clickable config link below) to
-    your device to configure it.</p>
-<h2>
-    <a href="" id="outputLink">Auto Configuration Link (send to your device and click it!)</a>
-</h2>
+        <form id="form">
+            <p>
+                <label for="mode">Mode</label>
+                <select id="mode">
+                    <option value="0">MQTT</option>
+                    <option value="3">HTTP</option>
+                </select>
+            </p>
+            <fieldset>
+                <legend>MQTT connection options</legend>
+                <p>
+                    <label for="mqttProtocolLevel">MQTT Protocol Level</label>
+                    <select id="mqttProtocolLevel">
+                        <option value="3">MQTT 3.1</option>
+                        <option value="4">MQTT 3.1.1</option>
+                    </select>
+                </p>
+                <p>
+                    <label for="auth" title="Enable Authentication"
+                        >Enable Authentication</label
+                    ><input type="checkbox" id="auth" />
+                </p>
+                <p>
+                    <label for="host">MQTT Hostname</label
+                    ><input type="text" id="host" />
+                </p>
+                <p>
+                    <label for="port">MQTT Port</label
+                    ><input type="number" max="65536" min="0" id="port" />
+                </p>
+                <p>
+                    <label for="username">MQTT Username</label
+                    ><input type="text" id="username" />
+                </p>
+                <p>
+                    <label for="password">MQTT Password</label
+                    ><input
+                        type="password"
+                        autocomplete="false"
+                        id="password"
+                    />
+                </p>
+                <p>
+                    <label for="ws">Use MQTT-over-websockets</label
+                    ><input type="checkbox" id="ws" />
+                </p>
+                <p>
+                    <label for="connectionTimeoutSeconds"
+                        >Connection timeout (s)</label
+                    >
+                    <input
+                        type="number"
+                        min="0"
+                        inputmode="numeric"
+                        id="connectionTimeoutSeconds"
+                    />
+                </p>
+                <p>
+                    <label for="tls">Enable TLS</label
+                    ><input type="checkbox" id="tls" />
+                </p>
+                <p>
+                    <label for="keepalive">Keepalive Interval</label
+                    ><input type="number" id="keepalive" />
+                </p>
+                <p>
+                    <label for="clientId">MQTT Client ID</label
+                    ><input type="text" id="clientId" />
+                </p>
+                <p>
+                    <label for="deviceId">MQTT Device ID</label
+                    ><input type="text" id="deviceId" />
+                </p>
+                <p>
+                    <label for="cleanSession">MQTT Clean Session</label
+                    ><input type="checkbox" id="cleanSession" />
+                </p>
+                <p>
+                    <label for="pubTopicBase">Publish Topic</label
+                    ><input type="text" id="pubTopicBase" />
+                </p>
+                <p>
+                    <label for="pubQos">Publish Message QoS</label>
+                    <select id="pubQos">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </p>
+                <p>
+                    <label for="pubRetain"
+                        >MQTT Retain flag on publish messages</label
+                    ><input type="checkbox" id="pubRetain" />
+                </p>
+                <p>
+                    <label for="subTopic">Subscription Topic</label
+                    ><input type="text" id="subTopic" />
+                </p>
+                <p>
+                    <label for="subQos">Subscription QoS</label>
+                    <select id="subQos">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </p>
+                <p>
+                    <label for="info"
+                        >Subscribe to other trackers' information events</label
+                    ><input type="checkbox" id="info" />
+                </p>
+                <p>
+                    <label for="publishLocationOnConnect"
+                        >Publish a location when connection to broker
+                        established</label
+                    >
+                    <input type="checkbox" id="publishLocationOnConnect" />
+                </p>
+            </fieldset>
+            <fieldset>
+                <legend>Map</legend>
+                <p>
+                    <label for="mapStyle">Map Style</label
+                    ><select id="mapStyle">
+                        <option value="GoogleMapDefault">
+                            Google Map Default
+                        </option>
+                        <option value="GoogleMapHybrid">
+                            Google Map Hybrid
+                        </option>
+                        <option value="GoogleMapSatellite">
+                            Google Map Satellite
+                        </option>
+                        <option value="GoogleMapTerrain">
+                            Google Map Terrain
+                        </option>
+                        <option value="OpenStreetMapNormal">
+                            OpenStreetMap Normal
+                        </option>
+                        <option value="OpenStreetMapWikimedia">
+                            OpenStreetMap Wikimedia
+                        </option>
+                    </select>
+                </p>
+                <p>
+                    <label for="enableMapRotation">Enable Map Rotation</label
+                    ><input type="checkbox" id="enableMapRotation" />
+                </p>
+                <p>
+                    <label for="osmTileScaleFactor"
+                        >OpenStreetMap tile scale factor</label
+                    >
+                    <input type="number" id="osmTileScaleFactor" />
+                </p>
+            </fieldset>
+            <fieldset>
+                <legend>Locator Settings</legend>
+                <p>
+                    <label for="ignoreInaccurateLocations"
+                        >Ignore locations with an accuracy greater than
+                        (m)</label
+                    >
+                    <input type="text" id="ignoreInaccurateLocations" />
+                </p>
+                <p>
+                    <label for="ignoreStaleLocations"
+                        >Ignore locations older than (s)</label
+                    >
+                    <input type="text" id="ignoreStaleLocations" />
+                </p>
+                <p>
+                    <label for="locatorInterval"
+                        >Request locations every (s)</label
+                    ><input type="number" min="0" id="locatorInterval" />
+                </p>
+                <p>
+                    <label for="moveModeLocatorInterval"
+                        >Request locations every (Move Mode) (s)</label
+                    >
+                    <input type="number" min="0" id="moveModeLocatorInterval" />
+                </p>
+                <p>
+                    <label for="locatorPriority">Locator Priority</label>
+                    <select id="locatorPriority">
+                        <option value="0">No Power (off)</option>
+                        <option value="1">Low Power</option>
+                        <option value="2">Balanced power / accuracy</option>
+                        <option value="3">High accuracy</option>
+                    </select>
+                </p>
+                <p>
+                    <label for="locatorDisplacement"
+                        >Movement distance before triggering location (m)</label
+                    >
+                    <input type="number" min="0" id="locatorDisplacement" />
+                </p>
+                <p>
+                    <label for="pegLocatorFastestIntervalToInterval"
+                        >Don't publish locations any faster than the requested
+                        interval</label
+                    >
+                    <input
+                        type="checkbox"
+                        id="pegLocatorFastestIntervalToInterval"
+                    />
+                </p>
+                <p>
+                    <label for="fusedRegionDetection"
+                        >Publish transition messages triggered by location
+                        change (as well as geofence)</label
+                    >
+                    <input type="checkbox" id="fusedRegionDetection" />
+                </p>
+            </fieldset>
+            <fieldset>
+                <legend>Reverse Geocoding</legend>
+                <p>
+                    <label for="reverseGeocodeProvider"
+                        >Reverse Geocode Provider</label
+                    >
+                    <select id="reverseGeocodeProvider">
+                        <option value="None">None</option>
+                        <option value="Device">Device (Google)</option>
+                        <option value="OpenCage">OpenCage</option>
+                    </select>
+                </p>
+                <p>
+                    <label for="opencageApiKey">OpenCage API Key</label
+                    ><input
+                        type="password"
+                        autocomplete="false"
+                        id="opencageApiKey"
+                    />
+                </p>
+            </fieldset>
+            <fieldset>
+                <legend>Notifications</legend>
+                <p>
+                    <label for="notificationHigherPriority"
+                        >Ongoing notification has higher priority?</label
+                    >
+                    <input type="checkbox" id="notificationHigherPriority" />
+                </p>
+                <p>
+                    <label for="notificationLocation"
+                        >Notification shows current location</label
+                    >
+                    <input type="checkbox" id="notificationLocation" />
+                </p>
+                <p>
+                    <label for="notificationEvents"
+                        >Show notification for events</label
+                    >
+                    <input type="checkbox" id="notificationEvents" />
+                </p>
+                <p>
+                    <label for="notificationGeocoderErrors"
+                        >Show notification for geocoder errors</label
+                    >
+                    <input type="checkbox" id="notificationGeocoderErrors" />
+                </p>
+            </fieldset>
+            <fieldset>
+                <legend>Misc</legend>
+                <p>
+                    <label for="theme">App Theme</label>
+                    <select id="theme">
+                        <option value="Light">Light</option>
+                        <option value="Dark">Dark</option>
+                        <option value="Auto">Auto</option>
+                    </select>
+                </p>
+                <p>
+                    <label for="autostartOnBoot"
+                        >Autostart when device boots</label
+                    ><input type="checkbox" id="autostartOnBoot" />
+                </p>
 
-<form id="form">
-    <p>
-        <label for="mode">Mode</label>
-        <select id="mode">
-            <option value="0">MQTT</option>
-            <option value="3">HTTP</option>
-        </select>
-    </p>
-    <fieldset>
-        <legend>MQTT connection options</legend>
-        <p><label for="mqttProtocolLevel">MQTT Protocol Level</label>
-            <select id="mqttProtocolLevel">
-                <option value="3">MQTT 3.1</option>
-                <option value="4">MQTT 3.1.1</option>
-            </select>
-        </p>
-        <p><label for="auth" title="Enable Authentication">Enable Authentication</label><input type="checkbox"
-                                                                                               id="auth"/></p>
-        <p><label for="host">MQTT Hostname</label><input type="text" id="host"/></p>
-        <p><label for="port">MQTT Port</label><input type="number" max="65536" min="0" id="port"/></p>
-        <p><label for="username">MQTT Username</label><input type="text" id="username"/></p>
-        <p><label for="password">MQTT Password</label><input type="password" id="password"/></p>
-        <p><label for="ws">Use MQTT-over-websockets</label><input type="checkbox" id="ws"/></p>
-        <p><label for="connectionTimeoutSeconds">Connection timeout (s)</label>
-            <input type="number" min="0" inputmode="numeric" id="connectionTimeoutSeconds"/>
-        </p>
-        <p><label for="tls">Enable TLS</label><input type="checkbox" id="tls"/></p>
-        <p><label for="keepalive">Keepalive Interval</label><input type="number" id="keepalive"/></p>
-        <p><label for="clientId">MQTT Client ID</label><input type="text" id="clientId"/></p>
-        <p><label for="deviceId">MQTT Device ID</label><input type="text" id="deviceId"/></p>
-        <p><label for="cleanSession">MQTT Clean Session</label><input type="checkbox" id="cleanSession"/></p>
-        <p><label for="pubTopicBase">Publish Topic</label><input type="text" id="pubTopicBase"/></p>
-        <p>
-            <label for="pubQos">Publish Message QoS</label>
-            <select id="pubQos">
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-            </select>
-        </p>
-        <p><label for="pubRetain">MQTT Retain flag on publish messages</label><input type="checkbox" id="pubRetain"/>
-        </p>
-        <p><label for="subTopic">Subscription Topic</label><input type="text" id="subTopic"/></p>
-        <p>
-            <label for="subQos">Subscription QoS</label>
-            <select id="subQos">
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-            </select>
-        </p>
-        <p><label for="info">Subscribe to other trackers' information events</label><input type="checkbox" id="info"/>
-        </p>
-        <p>
-            <label for="publishLocationOnConnect">Publish a location when connection to broker established</label>
-            <input type="checkbox" id="publishLocationOnConnect"/>
-        </p>
+                <p>
+                    <label for="extendedData"
+                        >Publish
+                        <a
+                            href="https://owntracks.org/booklet/tech/json/"
+                            title="OwnTracks JSON format"
+                            >Extended Data</a
+                        >
+                        (battery, connection etc.)</label
+                    >
+                    <input type="checkbox" id="extendedData" />
+                </p>
+                <p>
+                    <label for="remoteConfiguration"
+                        >Enable Remote Configuration</label
+                    >
+                    <input type="checkbox" id="remoteConfiguration" />
+                </p>
+                <p>
+                    <label for="cmd">Enable Remote Commands</label>
+                    <input type="checkbox" id="cmd" />
+                </p>
+            </fieldset>
+        </form>
+        <section>
+            <h2>Output Configuration</h2>
+            <div id="config">
+                <pre id="outputConfig"></pre>
 
-    </fieldset>
-    <fieldset>
-        <legend>Map</legend>
-        <p><label for="mapStyle">Map Style</label><select id="mapStyle">
-            <option value="GoogleMapDefault">Google Map Default</option>
-            <option value="GoogleMapHybrid">Google Map Hybrid</option>
-            <option value="GoogleMapSatellite">Google Map Satellite</option>
-            <option value="GoogleMapTerrain">Google Map Terrain</option>
-            <option value="OpenStreetMapNormal">OpenStreetMap Normal</option>
-            <option value="OpenStreetMapWikimedia">OpenStreetMap Wikimedia</option>
-        </select></p>
-        <p><label for="enableMapRotation">Enable Map Rotation</label><input type="checkbox" id="enableMapRotation"/></p>
-        <p>
-            <label for="osmTileScaleFactor">OpenStreetMap tile scale factor</label>
-            <input type="number" id="osmTileScaleFactor"/>
-        </p>
-
-    </fieldset>
-    <fieldset>
-        <legend>Locator Settings</legend>
-        <p>
-            <label for="ignoreInaccurateLocations">Ignore locations with an accuracy greater than (m)</label>
-            <input type="text" id="ignoreInaccurateLocations"/>
-        </p>
-        <p>
-            <label for="ignoreStaleLocations">Ignore locations older than (s)</label>
-            <input type="text" id="ignoreStaleLocations"/>
-        </p>
-        <p><label for="locatorInterval">Request locations every (s)</label><input type="number" min="0"
-                                                                                  id="locatorInterval"/></p>
-        <p>
-            <label for="moveModeLocatorInterval">Request locations every (Move Mode) (s)</label>
-            <input type="number" min="0" id="moveModeLocatorInterval"/>
-        </p>
-        <p><label for="locatorPriority">Locator Priority</label>
-            <select id="locatorPriority">
-                <option value="0">No Power (off)</option>
-                <option value="1">Low Power</option>
-                <option value="2">Balanced power / accuracy</option>
-                <option value="3">High accuracy</option>
-            </select>
-        </p>
-        <p>
-            <label for="locatorDisplacement">Movement distance before triggering location (m)</label>
-            <input type="number" min="0" id="locatorDisplacement"/>
-        </p>
-        <p>
-            <label for="pegLocatorFastestIntervalToInterval">Don't publish locations any faster than the requested
-                interval</label>
-            <input type="checkbox" id="pegLocatorFastestIntervalToInterval"/>
-        </p>
-        <p>
-            <label for="fusedRegionDetection">Publish transition messages triggered by location change (as well as
-                geofence)</label>
-            <input type="checkbox" id="fusedRegionDetection"/>
-        </p>
-
-    </fieldset>
-    <fieldset>
-        <legend>Reverse Geocoding</legend>
-        <p>
-            <label for="reverseGeocodeProvider">Reverse Geocode Provider</label>
-            <select id="reverseGeocodeProvider">
-                <option value="None">None</option>
-                <option value="Device">Device (Google)</option>
-                <option value="OpenCage">OpenCage</option>
-            </select>
-        </p>
-        <p><label for="opencageApiKey">OpenCage API Key</label><input type="password" id="opencageApiKey"/></p>
-    </fieldset>
-    <fieldset>
-        <legend>Notifications</legend>
-        <p>
-            <label for="notificationHigherPriority">Ongoing notification has higher priority?</label>
-            <input type="checkbox" id="notificationHigherPriority"/>
-        </p>
-        <p>
-            <label for="notificationLocation">Notification shows current location</label>
-            <input type="checkbox" id="notificationLocation"/>
-        </p>
-        <p>
-            <label for="notificationEvents">Show notification for events</label>
-            <input type="checkbox" id="notificationEvents"/>
-        </p>
-        <p>
-            <label for="notificationGeocoderErrors">Show notification for geocoder errors</label>
-            <input type="checkbox" id="notificationGeocoderErrors"/>
-        </p>
-    </fieldset>
-    <fieldset>
-        <legend>Misc</legend>
-        <p>
-            <label for="theme">App Theme</label>
-            <select id="theme">
-                <option value="Light">Light</option>
-                <option value="Dark">Dark</option>
-                <option value="Auto">Auto</option>
-            </select>
-        </p>
-        <p><label for="autostartOnBoot">Autostart when device boots</label><input type="checkbox" id="autostartOnBoot"/>
-        </p>
-
-
-        <p>
-            <label for="extendedData">Publish <a href="https://owntracks.org/booklet/tech/json/"
-                                                 title="OwnTracks JSON format">Extended Data</a> (battery, connection
-                etc.)</label>
-            <input type="checkbox" id="extendedData"/>
-        </p>
-        <p>
-            <label for="remoteConfiguration">Enable Remote Configuration</label>
-            <input type="checkbox" id="remoteConfiguration"/>
-        </p>
-        <p>
-            <label for="cmd">Enable Remote Commands</label>
-            <input type="checkbox" id="cmd"/>
-        </p>
-    </fieldset>
-</form>
-<section>
-    <h2>Output Configuration</h2>
-    <div id="config">
-        <pre id="outputConfig"></pre>
-
-        <div id="links">
-            <label for="outputURL">Output Configuration URL</label>
-            <textarea id="outputURL" readonly="readonly" cols="100" rows="10"></textarea>
-        </div>
-    </div>
-</section>
-</body>
+                <div id="links">
+                    <label for="outputURL">Output Configuration URL</label>
+                    <textarea
+                        id="outputURL"
+                        readonly="readonly"
+                        cols="100"
+                        rows="10"
+                    ></textarea>
+                </div>
+            </div>
+        </section>
+    </body>
 </html>
